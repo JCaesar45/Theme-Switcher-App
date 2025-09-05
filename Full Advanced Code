@@ -139,7 +139,7 @@ body.theme-forest {
 <div aria-live="polite" id="theme-message"></div>
 
 <!-- Background music (looping) -->
-  <audio id="bg-music" src="https://kappa.vgmsite.com/soundtracks/nba-street-gc-ps2-gamerip-2001/evrhrrdoqy/08.%20The%20Blend.mp3" loop autoplay></audio>
+  <audio id="bg-music" src="https://kappa.vgmsite.com/soundtracks/nba-street-gc-ps2-gamerip-2001/cgcgbsqhmz/11.%20The%20Chase.mp3" loop autoplay></audio>
 
   <!-- Sound effects -->
   <audio id="sound-toggle" src="https://www.myinstants.com/media/sounds/batman-transition-download-sound-link.mp3"></audio>
