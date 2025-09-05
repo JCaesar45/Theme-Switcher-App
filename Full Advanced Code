@@ -161,6 +161,12 @@ body.theme-forest {
   const soundToggle = document.getElementById('sound-toggle');
   const soundSelect = document.getElementById('sound-select');
 
+button.addEventListener("click", () => {
+    if (bgMusic.paused) {
+      bgMusic.play().catch(err => console.log("Autoplay blocked:", err));
+    }
+  });
+
   // Utility functions
   const showMessage = (msg) => {
     messageRegion.textContent = msg;
