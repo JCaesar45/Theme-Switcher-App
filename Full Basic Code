@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Theme Switcher</title>
+<style>
+  /* Basic styles for themes */
+  body.theme-light {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+  body.theme-dark {
+    background-color: #222;
+    color: #fff;
+  }
+  /* Style for the dropdown */
+  #theme-dropdown {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    width: 150px;
+    background: #fff;
+    position: absolute;
+  }
+  #theme-dropdown[hidden] {
+    display: none;
+  }
+  [role="menu-item"] {
+    padding: 8px;
+    cursor: pointer;
+  }
+  [role="menu-item"]:hover {
+    background-color: #eee;
+  }
+</style>
+</head>
+<body>
+
+<!-- Theme switcher button -->
+<button
+  id="theme-switcher-button"
+  aria-haspopup="true"
+  aria-expanded="false"
+  aria-controls="theme-dropdown"
+>
+  Switch Theme
+</button>
+
+<!-- Theme dropdown menu -->
+<ul
+  id="theme-dropdown"
+  role="menu"
+  aria-labelledby="theme-switcher-button"
+  hidden
+>
+  <li id="theme-light" role="menu-item">Light</li>
+  <li id="theme-dark" role="menu-item">Dark</li>
+</ul>
+
+<!-- Live region for messages -->
+<div aria-live="polite" id="theme-message"></div>
+
+<script>
+  // Define themes array
+  const themes = [
+    { name: 'light', message: 'Light theme activated.' },
+    { name: 'dark', message: 'Dark theme activated.' },
+  ];
+
+  const button = document.getElementById('theme-switcher-button');
+  const dropdown = document.getElementById('theme-dropdown');
+  const messageRegion = document.getElementById('theme-message');
+
+  // Toggle dropdown menu
+ button.addEventListener('click', () => {
+    const isHidden = dropdown.hasAttribute('hidden');
+    if (isHidden) {
+      // Show menu
+      dropdown.removeAttribute('hidden');
+      button.setAttribute('aria-expanded', 'true');
+    } else {
+      // Hide menu
+      dropdown.setAttribute('hidden', '');
+      button.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Handle clicks on theme options
+dropdown.querySelectorAll('[role="menu-item"]').forEach((item) => {
+    item.addEventListener('click', () => {
+      const themeName = item.textContent.toLowerCase(); // e.g., 'light' or 'dark'
+      
+      // Remove existing theme classes
+      document.body.classList.remove(...themes.map(t => 'theme-' + t.name));
+
+      // Add selected theme class
+      document.body.classList.add('theme-' + themeName);
+
+      // Find message for theme
+      const selectedTheme = themes.find(t => t.name === themeName);
+      if (selectedTheme) {
+        messageRegion.textContent = selectedTheme.message;
+      }
+
+      // Hide menu after selection
+      dropdown.setAttribute('hidden', '');
+      button.setAttribute('aria-expanded', 'false');
+    });
+  });
+</script>
+
+</body>
+</html>
