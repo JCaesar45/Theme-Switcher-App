@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Creative Theme Switcher</title>
+<!-- Link to Google Fonts for a modern style -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  /* Reset and base styles */
+  body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 2em;
+    transition: background-color 0.5s, color 0.5s;
+    position: relative;
+  }
+
+  /* Button styles */
+  #theme-switcher-button {
+    font-size: 1.2em;
+    padding: 0.75em 1.5em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: background 0.3s, transform 0.2s;
+  }
+  #theme-switcher-button:hover {
+    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    transform: translateY(-2px);
+  }
+
+  /* Dropdown styles with animation */
+  #theme-dropdown {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    background: #fff;
+    width: 180px;
+    animation: fadeIn 0.3s ease-out;
+    position: absolute;
+    z-index: 1000;
+  }
+  #theme-dropdown[hidden] {
+    display: none;
+  }
+  [role="menu-item"] {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+  }
+  [role="menu-item"]:hover {
+    background-color: #f0f0f0;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Themes styling */
+  body.theme-light {
+    background-color: #fefefe;
+    color: #222;
+  }
+  body.theme-dark {
+    background-color: #222;
+    color: #fefefe;
+  }
+  body.theme-ocean {
+    background-color: #2e8bff;
+    color: #fff;
+  }
+  body.theme-forest {
+    background-color: #228b22;
+    color: #fff;
+  }
+
+  /* Style for the aria-live message box */
+  #theme-message {
+    position: fixed;
+    bottom: 10px;
+    right: 20px;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1em;
+    max-width: 300px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  #theme-message.show {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<!-- Theme switcher button -->
+<button
+  id="theme-switcher-button"
+  aria-haspopup="true"
+  aria-expanded="false"
+  aria-controls="theme-dropdown"
+>
+  Switch Theme
+</button>
+
+<!-- Theme dropdown menu -->
+<ul
+  id="theme-dropdown"
+  role="menu"
+  aria-labelledby="theme-switcher-button"
+  hidden
+>
+  <li id="theme-light" role="menu-item">Light</li>
+  <li id="theme-dark" role="menu-item">Dark</li>
+  <li id="theme-ocean" role="menu-item">Ocean</li>
+  <li id="theme-forest" role="menu-item">Forest</li>
+</ul>
+
+<!-- Live region for messages -->
+<div aria-live="polite" id="theme-message"></div>
+
+<!-- Background music (looping) -->
+<audio id="bg-music" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop autoplay></audio>
+
+<!-- Sound effects -->
+<audio id="sound-toggle" src="https://freesound.org/data/previews/512/512144_1023654-lq.mp3"></audio>
+<audio id="sound-select" src="https://freesound.org/data/previews/512/512145_1023654-lq.mp3"></audio>
+
+<script>
+  // Define themes with more options
+  const themes = [
+    { name: 'light', message: 'Light theme activated.' },
+    { name: 'dark', message: 'Dark theme activated.' },
+    { name: 'ocean', message: 'Ocean theme activated.' },
+    { name: 'forest', message: 'Forest theme activated.' },
+  ];
+
+  const button = document.getElementById('theme-switcher-button');
+  const dropdown = document.getElementById('theme-dropdown');
+  const messageRegion = document.getElementById('theme-message');
+  const bgMusic = document.getElementById('bg-music');
+  const soundToggle = document.getElementById('sound-toggle');
+  const soundSelect = document.getElementById('sound-select');
+
+  // Utility functions
+  const showMessage = (msg) => {
+    messageRegion.textContent = msg;
+    messageRegion.classList.add('show');
+    setTimeout(() => {
+      messageRegion.classList.remove('show');
+    }, 3000);
+  };
+
+  // Toggle dropdown menu
+button.addEventListener('click', () => {
+    const isHidden = dropdown.hasAttribute('hidden');
+    if (isHidden) {
+      dropdown.removeAttribute('hidden');
+      button.setAttribute('aria-expanded', 'true');
+      // Play toggle sound
+      soundToggle.currentTime = 0;
+      soundToggle.play();
+    } else {
+      dropdown.setAttribute('hidden', '');
+      button.setAttribute('aria-expanded', 'false');
+      // Play toggle sound
+      soundToggle.currentTime = 0;
+      soundToggle.play();
+    }
+  });
+
+// Handle theme selection
+dropdown.querySelectorAll('[role="menu-item"]').forEach((item) => {
+  item.addEventListener('click', () => {
+    const themeName = item.textContent.toLowerCase();
+
+    // Remove existing theme classes
+    document.body.classList.remove(...themes.map(t => 'theme-' + t.name));
+
+    // Add the selected theme class
+    document.body.classList.add('theme-' + themeName);
+
+    // Show message
+    const themeObj = themes.find(t => t.name === themeName);
+    if (themeObj) {
+      showMessage(themeObj.message);
+    }
+
+    // Play select sound
+    soundSelect.currentTime = 0;
+    soundSelect.play();
+
+    // Hide dropdown
+    dropdown.setAttribute('hidden', '');
+    button.setAttribute('aria-expanded', 'false');
+  });
+});
+</script>
+
+</body>
+</html>
